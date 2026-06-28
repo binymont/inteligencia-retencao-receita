@@ -1,4 +1,4 @@
-# Customer Revenue Intelligence Platform
+# revenue-retention-intelligence
 
 Plataforma de Analytics Engineering para Inteligência de Receita, Retenção de Clientes e Performance de Marketing utilizando PySpark, SQL e modelagem dimensional.
 
