@@ -22,5 +22,6 @@ class ValidationManager:
         self,
         df: DataFrame,
     ) -> DataFrame:
-        """Mark records that violate business expectations for further investigation."""
+        """Mark records that violate business expectations
+        for further investigation."""
         return df

@@ -9,11 +9,15 @@ from src.ingestion import IngestionManager
 from src.metrics import MetricCalculator
 from src.transformations import TransformationManager
 from src.validations import ValidationManager
-from src.utils import ensure_directory, setup_logging
+from src.utils import (
+    ensure_directory,
+    setup_logging,
+)
 
 
 def create_spark_session() -> SparkSession:
-    """Create a Spark session configured for local development and production parity."""
+    """Create a Spark session configured for local development
+    and production parity."""
     return (
         SparkSession.builder.appName(spark_config.app_name)
         .master(spark_config.master)
@@ -38,11 +42,20 @@ def run_pipeline() -> None:
 
     raw_sources = ingestion_manager.ingest()
 
-    bronze_orders = cleaner.clean_orders(raw_sources["orders"])
-    bronze_customers = cleaner.clean_customers(raw_sources["customers"])
-    bronze_marketing = cleaner.clean_marketing_spend(raw_sources["marketing_spend"])
+    bronze_orders = cleaner.clean_orders(
+        raw_sources["orders"],
+    )
+    bronze_customers = cleaner.clean_customers(
+        raw_sources["customers"],
+    )
+    bronze_marketing = cleaner.clean_marketing_spend(
+        raw_sources["marketing_spend"],
+    )
 
-    order_fact = transformer.build_order_fact(bronze_orders, bronze_customers)
+    order_fact = transformer.build_order_fact(
+        bronze_orders,
+        bronze_customers,
+    )
     customer_dim = transformer.build_customer_dimension(bronze_customers)
     marketing_fact = transformer.build_marketing_spend_fact(bronze_marketing)
 
@@ -64,7 +77,8 @@ def run_pipeline() -> None:
     metrics.calculate_refund_impact(order_fact)
 
     logger.info(
-        "Pipeline orchestration completed. Verify data outputs and downstream consumption."
+        "Pipeline orchestration completed. Verify data outputs "
+        "and downstream consumption."
     )
     spark.stop()
 
