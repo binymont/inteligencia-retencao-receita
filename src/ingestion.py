@@ -1,6 +1,5 @@
 """Data ingestion layer for the analytics engineering pipeline."""
 
-from pathlib import Path
 from typing import Dict
 
 from pyspark.sql import DataFrame, SparkSession
@@ -18,12 +17,15 @@ class IngestionManager:
     def load_csv(self, source_name: str, file_name: str) -> DataFrame:
         """Load a CSV file from raw data and return a DataFrame."""
         file_path = RAW_DIR / file_name
-        return self.spark.read.options(
-            header=True,
-            inferSchema=True,
-            mode="PERMISSIVE",
-            timestampFormat="yyyy-MM-dd HH:mm:ss",
-        ).csv(str(file_path))
+        return (
+            self.spark.read.options(
+                header=True,
+                inferSchema=True,
+                mode="PERMISSIVE",
+                timestampFormat="yyyy-MM-dd HH:mm:ss",
+            )
+            .csv(str(file_path))
+        )
 
     def ingest(self) -> Dict[str, DataFrame]:
         """Ingest configured raw CSV sources into memory for downstream processing."""

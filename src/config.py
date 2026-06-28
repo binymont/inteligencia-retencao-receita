@@ -19,11 +19,13 @@ CSV_SOURCES: Dict[str, str] = {
     "marketing_spend": "marketing_spend.csv",
 }
 
+
 @dataclass(frozen=True)
 class SparkConfig:
     app_name: str = "revenue_retention_intelligence"
     master: str = "local[*]"
     shuffle_partitions: int = 8
     checkpoint_dir: Path = PROJECT_ROOT / "checkpoints"
+
 
 spark_config = SparkConfig()

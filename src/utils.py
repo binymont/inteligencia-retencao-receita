@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict
 
 
 def setup_logging(log_dir: Path) -> None:
@@ -31,4 +31,10 @@ def ensure_directory(path: Path) -> Path:
 
 def infer_data_quality_level(records_count: int, error_count: int) -> str:
     """Infer a simple quality label based on error ratio."""
-    return "high" if records_count and error_count / records_count < 0.01 else "medium" if records_count else "unknown"
+    return (
+        "high"
+        if records_count and error_count / records_count < 0.01
+        else "medium"
+        if records_count
+        else "unknown"
+    )

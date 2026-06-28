@@ -1,7 +1,6 @@
 """Cleaning routines for raw and bronze data layers."""
 
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col
 
 
 class DataCleaner:
