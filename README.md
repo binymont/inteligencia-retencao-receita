@@ -21,6 +21,7 @@ O projeto `revenue-retention-intelligence` foi estruturado como uma solução pr
 - Estabelecer uma arquitetura robusta pronta para produção.
 - Permitir evolução para análises de retenção, receita e churn.
 - Garantir que a solução seja modular, testável e documentada.
+- Atualizar automaticamente o pipeline com GitHub Actions.
 
 ## Arquitetura
 
