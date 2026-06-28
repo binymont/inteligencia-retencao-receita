@@ -1,8 +1,10 @@
-# Revenue Retention Intelligence
+# Inteligência de Receita e Retenção
+
+Plataforma de Analytics Engineering para Inteligência de Receita, Retenção de Clientes e Performance de Marketing utilizando PySpark, SQL e modelagem dimensional.
 
 ## Visão Geral
 
-O projeto `revenue-retention-intelligence` foi estruturado como uma solução profissional de Analytics Engineering para um e-commerce D2C. A arquitetura segue o padrão Medallion para garantir governança, qualidade de dados e escalabilidade.
+O projeto `inteligencia-retencao-receita` foi estruturado como uma solução profissional de Analytics Engineering para um e-commerce D2C. A arquitetura segue o padrão Medallion para garantir governança, qualidade de dados e escalabilidade.
 
 ## Problema de Negócio
 
@@ -19,6 +21,7 @@ O projeto `revenue-retention-intelligence` foi estruturado como uma solução pr
 - Estabelecer uma arquitetura robusta pronta para produção.
 - Permitir evolução para análises de retenção, receita e churn.
 - Garantir que a solução seja modular, testável e documentada.
+- Atualizar automaticamente o pipeline com GitHub Actions.
 
 ## Arquitetura
 
