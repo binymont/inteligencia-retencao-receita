@@ -1,4 +1,4 @@
-# revenue-retention-intelligence
+# Inteligência de Receita e Retenção
 
 Plataforma de Analytics Engineering para Inteligência de Receita, Retenção de Clientes e Performance de Marketing utilizando PySpark, SQL e modelagem dimensional.
 
