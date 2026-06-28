@@ -17,6 +17,7 @@ class IngestionManager:
     def load_csv(self, source_name: str, file_name: str) -> DataFrame:
         """Load a CSV file from raw data and return a DataFrame."""
         file_path = RAW_DIR / file_name
+        self.spark.sparkContext.setLogLevel("ERROR")
         return (
             self.spark.read.options(
                 header=True,

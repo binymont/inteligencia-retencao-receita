@@ -40,47 +40,49 @@ def run_pipeline() -> None:
 
     logger.info("Starting analytics engineering pipeline.")
 
-    raw_sources = ingestion_manager.ingest()
+    try:
+        raw_sources = ingestion_manager.ingest()
 
-    bronze_orders = cleaner.clean_orders(
-        raw_sources["orders"],
-    )
-    bronze_customers = cleaner.clean_customers(
-        raw_sources["customers"],
-    )
-    bronze_marketing = cleaner.clean_marketing_spend(
-        raw_sources["marketing_spend"],
-    )
+        bronze_orders = cleaner.clean_orders(
+            raw_sources["orders"],
+        )
+        bronze_customers = cleaner.clean_customers(
+            raw_sources["customers"],
+        )
+        bronze_marketing = cleaner.clean_marketing_spend(
+            raw_sources["marketing_spend"],
+        )
 
-    order_fact = transformer.build_order_fact(
-        bronze_orders,
-        bronze_customers,
-    )
-    customer_dim = transformer.build_customer_dimension(bronze_customers)
-    marketing_fact = transformer.build_marketing_spend_fact(bronze_marketing)
+        order_fact = transformer.build_order_fact(
+            bronze_orders,
+            bronze_customers,
+        )
+        customer_dim = transformer.build_customer_dimension(bronze_customers)
+        marketing_fact = transformer.build_marketing_spend_fact(bronze_marketing)
 
-    validator.validate_schema(
-        order_fact,
-        "order_fact_schema",
-    )
-    validator.validate_schema(
-        customer_dim,
-        "customer_dim_schema",
-    )
-    validator.validate_schema(
-        marketing_fact,
-        "marketing_fact_schema",
-    )
+        validator.validate_schema(
+            order_fact,
+            "order_fact_schema",
+        )
+        validator.validate_schema(
+            customer_dim,
+            "customer_dim_schema",
+        )
+        validator.validate_schema(
+            marketing_fact,
+            "marketing_fact_schema",
+        )
 
-    metrics.calculate_revenue_by_channel(order_fact, marketing_fact)
-    metrics.calculate_customer_retention(order_fact)
-    metrics.calculate_refund_impact(order_fact)
+        metrics.calculate_revenue_by_channel(order_fact, marketing_fact)
+        metrics.calculate_customer_retention(order_fact)
+        metrics.calculate_refund_impact(order_fact)
 
-    logger.info(
-        "Pipeline orchestration completed. Verify data outputs "
-        "and downstream consumption."
-    )
-    spark.stop()
+        logger.info(
+            "Pipeline orchestration completed. Verify data outputs "
+            "and downstream consumption."
+        )
+    finally:
+        spark.stop()
 
 
 if __name__ == "__main__":
