@@ -4,7 +4,7 @@ Plataforma de Analytics Engineering para Inteligência de Receita, Retenção de
 
 ## Visão Geral
 
-O projeto `revenue-retention-intelligence` foi estruturado como uma solução profissional de Analytics Engineering para um e-commerce D2C. A arquitetura segue o padrão Medallion para garantir governança, qualidade de dados e escalabilidade.
+O projeto `inteligencia-retencao-receita` foi estruturado como uma solução profissional de Analytics Engineering para um e-commerce D2C. A arquitetura segue o padrão Medallion para garantir governança, qualidade de dados e escalabilidade.
 
 ## Problema de Negócio
 
