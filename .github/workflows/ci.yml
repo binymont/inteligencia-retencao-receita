@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - develop
-      - homologacao
+      - main
+      - 'release/**'
   pull_request:
     branches:
       - develop
-      - homologacao
+      - main
 
 jobs:
   test:
@@ -51,3 +52,53 @@ jobs:
         run: |
           python -m pip install flake8
           flake8 src tests
+
+  create_release:
+    needs: [test, lint]
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch release branch history
+        run: |
+          git fetch origin '+refs/heads/release/*:refs/remotes/origin/release/*' || true
+
+      - name: Determine next release version
+        id: release_version
+        run: |
+          python - <<'PY'
+          import re
+          import subprocess
+
+          out = subprocess.check_output(
+              ["git", "branch", "-r", "--list", "origin/release/*"], text=True
+          )
+          versions = []
+          for line in out.splitlines():
+              branch = line.strip().removeprefix("origin/release/")
+              match = re.match(r"^(\d+)\.(\d+)$", branch)
+              if match:
+                  versions.append((int(match.group(1)), int(match.group(2))))
+
+          if versions:
+              major, minor = max(versions)
+              next_version = f"{major}.{minor + 1}"
+          else:
+              next_version = "0.1"
+
+          print(next_version)
+          with open("release_version.txt", "w", encoding="utf-8") as output:
+              output.write(next_version)
+          PY
+
+      - name: Create and push release branch
+        run: |
+          version=$(cat release_version.txt)
+          branch="release/${version}"
+          git checkout -b "$branch"
+          git push origin "$branch"
