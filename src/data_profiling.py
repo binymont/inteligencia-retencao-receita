@@ -12,7 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 def create_spark_session(app_name: str = "data_profiling") -> SparkSession:
-    spark = SparkSession.builder.appName(app_name).master("local[*]").getOrCreate()
+    spark = (
+        SparkSession.builder
+        .appName(app_name)
+        .master("local[*]")
+        .getOrCreate()
+    )
     spark.sparkContext.setLogLevel("ERROR")
     logger.info("Spark session inicializada para data profiling.")
     return spark
@@ -24,7 +29,11 @@ def discover_csvs(raw_dir: Path = RAW_DIR) -> List[Path]:
         return []
 
     csv_files = sorted(raw_dir.glob("*.csv"))
-    logger.info("Foram identificados %d arquivos CSV em %s", len(csv_files), raw_dir)
+    logger.info(
+        "Foram identificados %d arquivos CSV em %s",
+        len(csv_files),
+        raw_dir,
+    )
     return csv_files
 
 
@@ -39,7 +48,10 @@ def load_csv(spark: SparkSession, path: Path) -> DataFrame:
 
 
 def get_schema_info(df: DataFrame) -> List[Tuple[str, str, bool]]:
-    schema_info = [(field.name, field.dataType.simpleString(), field.nullable) for field in df.schema]
+    schema_info = [
+        (field.name, field.dataType.simpleString(), field.nullable)
+        for field in df.schema
+    ]
     logger.debug("Schema detectado: %s", schema_info)
     return schema_info
 
@@ -58,7 +70,12 @@ def count_columns(df: DataFrame) -> int:
 
 def count_nulls(df: DataFrame) -> Dict[str, int]:
     exprs = [
-        F.count(F.when(F.col(column).isNull() | (F.col(column) == ""), column)).alias(column)
+        F.count(
+            F.when(
+                F.col(column).isNull() | (F.col(column) == ""),
+                column,
+            )
+        ).alias(column)
         for column in df.columns
     ]
     row = df.select(exprs).collect()[0].asDict()
@@ -81,7 +98,15 @@ def describe_numeric(df: DataFrame) -> Dict[str, Dict[str, float]]:
         for field in df.schema
         if isinstance(
             field.dataType,
-            (T.ByteType, T.ShortType, T.IntegerType, T.LongType, T.FloatType, T.DoubleType, T.DecimalType),
+            (
+                T.ByteType,
+                T.ShortType,
+                T.IntegerType,
+                T.LongType,
+                T.FloatType,
+                T.DoubleType,
+                T.DecimalType,
+            ),
         )
     ]
     if not numeric_fields:
@@ -97,7 +122,10 @@ def describe_numeric(df: DataFrame) -> Dict[str, Dict[str, float]]:
         for field in numeric_fields:
             value = row[field]
             result[field][summary] = float(value) if value is not None else 0.0
-    logger.info("Estatísticas descritivas numéricas geradas para: %s", numeric_fields)
+    logger.info(
+        "Estatísticas descritivas numéricas geradas para: %s",
+        numeric_fields,
+    )
     return result
 
 
@@ -112,7 +140,9 @@ def detect_primary_keys(df: DataFrame) -> List[str]:
     return candidates
 
 
-def detect_relationships(tables: List[Dict[str, Any]]) -> List[Tuple[str, str, str, float]]:
+def detect_relationships(
+    tables: List[Dict[str, Any]],
+) -> List[Tuple[str, str, str, float]]:
     relationships: List[Tuple[str, str, str, float]] = []
     for left in tables:
         for right in tables:
@@ -120,7 +150,9 @@ def detect_relationships(tables: List[Dict[str, Any]]) -> List[Tuple[str, str, s
                 continue
             left_df = left["dataframe"]
             right_df = right["dataframe"]
-            shared_columns = set(left_df.columns).intersection(right_df.columns)
+            shared_columns = set(left_df.columns).intersection(
+                right_df.columns,
+            )
             for column in shared_columns:
                 left_distinct = left_df.select(column).distinct().count()
                 if left_distinct == 0:
@@ -137,7 +169,8 @@ def detect_relationships(tables: List[Dict[str, Any]]) -> List[Tuple[str, str, s
                         (left["source"], right["source"], column, coverage)
                     )
                     logger.info(
-                        "Detectado relacionamento possível: %s.%s -> %s.%s (%.2f)",
+                        "Detectado relacionamento possível: %s.%s -> %s.%s "
+                        "(%.2f)",
                         left["source"],
                         column,
                         right["source"],
@@ -184,7 +217,10 @@ def generate_data_profile_report(
             lines.append(f"## Tabela: {profile['source']}")
             lines.append(f"- Registros: {profile['row_count']}")
             lines.append(f"- Colunas: {profile['column_count']}")
-            lines.append(f"- Possíveis chaves primárias: {profile['candidate_primary_keys']}")
+            lines.append(
+                f"- Possíveis chaves primárias: "
+                f"{profile['candidate_primary_keys']}"
+            )
             lines.append(f"- Duplicados: {profile['duplicates']}")
             lines.append("")
             lines.append("### Schema")
@@ -213,11 +249,14 @@ def generate_data_profile_report(
         if relationships:
             for left, right, column, coverage in relationships:
                 lines.append(
-                    f"- `{left}.{column}` pode se relacionar com `{right}.{column}` "
-                    f"(cobertura {coverage:.2f})"
+                    f"- `{left}.{column}` pode se relacionar com "
+                    f"`{right}.{column}` (cobertura {coverage:.2f})"
                 )
         else:
-            lines.append("- Nenhum relacionamento automático identificado entre as tabelas.")
+            lines.append(
+                "- Nenhum relacionamento automático identificado "
+                "entre as tabelas."
+            )
 
     output_path.write_text("\n".join(lines), encoding="utf-8")
     logger.info("Relatório de data profiling gerado em %s", output_path)

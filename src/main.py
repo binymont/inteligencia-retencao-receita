@@ -58,7 +58,9 @@ def run_pipeline() -> None:
             bronze_customers,
         )
         customer_dim = transformer.build_customer_dimension(bronze_customers)
-        marketing_fact = transformer.build_marketing_spend_fact(bronze_marketing)
+        marketing_fact = transformer.build_marketing_spend_fact(
+            bronze_marketing,
+        )
 
         validator.validate_schema(
             order_fact,
