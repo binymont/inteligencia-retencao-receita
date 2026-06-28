@@ -20,7 +20,10 @@ def setup_logging(log_dir: Path) -> None:
 
 def normalize_columns(columns: Dict[str, str]) -> Dict[str, str]:
     """Return a normalized mapping of source column names."""
-    return {source.lower().strip(): target for source, target in columns.items()}
+    return {
+        source.lower().strip(): target
+        for source, target in columns.items()
+    }
 
 
 def ensure_directory(path: Path) -> Path:

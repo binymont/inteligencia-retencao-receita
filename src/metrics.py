@@ -11,7 +11,8 @@ class MetricCalculator:
         order_fact_df: DataFrame,
         marketing_fact_df: DataFrame,
     ) -> DataFrame:
-        """Define the interface to compute revenue attribution by marketing channel."""
+        """Define the interface to compute revenue attribution
+        by marketing channel."""
         return order_fact_df
 
     def calculate_customer_retention(

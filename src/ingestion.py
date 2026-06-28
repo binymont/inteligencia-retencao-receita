@@ -24,13 +24,19 @@ class IngestionManager:
                 mode="PERMISSIVE",
                 timestampFormat="yyyy-MM-dd HH:mm:ss",
             )
-            .csv(str(file_path))
+            .csv(
+                str(file_path),
+            )
         )
 
     def ingest(self) -> Dict[str, DataFrame]:
-        """Ingest configured raw CSV sources into memory for downstream processing."""
+        """Ingest configured raw CSV sources into memory
+        for downstream processing."""
         ensure_directory(RAW_DIR)
         loaded_data = {}
         for source_name, file_name in CSV_SOURCES.items():
-            loaded_data[source_name] = self.load_csv(source_name, file_name)
+            loaded_data[source_name] = self.load_csv(
+                source_name,
+                file_name,
+            )
         return loaded_data
